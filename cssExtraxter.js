@@ -45,7 +45,7 @@ function getStylePiecesForOneFile(variablesToExtract, source) {
 }
 
 function extractCssLinesWithValue(content, value) {
-    const reqExp = new RegExp("}(?:(?!\\}).)*" + value + "(?:(?![;\\}]).)*[;\\}]", "gi"); ///}(?:(?!\}).)*#F0A62F/gi
+    const reqExp = new RegExp("}(?:(?!\\})(.|\\n))*" + value + "(?:(?![;\\}])(.|\\n))*[;\\}]", "gi"); ///}(?:(?!\}).)*#F0A62F/gi
     return content.match(reqExp);
 }
 
