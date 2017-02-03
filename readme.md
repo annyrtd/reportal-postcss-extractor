@@ -3,5 +3,5 @@
 Usage:
 
 ```bash
-npm install reportal-postcss-extractor
+npm install npm install github:annyrtd/reportal-postcss-extractor
 ```
