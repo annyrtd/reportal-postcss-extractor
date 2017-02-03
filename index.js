@@ -8,9 +8,10 @@ const transformCssToJsVariables = require('./cssToJsTransformer').transformCssTo
 const transformCssToReportalConfig = require('./cssToJsTransformer').transformCssToReportalConfig;
 
 class ReportalPostCssExtracter {
-    constructor(filePath, toReportalScripts = true) {
+    constructor({filePath, toReportalScripts = true, variableNameRegExp = /\$\S+/}) {
         this.fileWithVariables = path.resolve(filePath);
         this.toReportalScripts = toReportalScripts;
+        this.variableNameRegExp = variableNameRegExp;
     }
 
     saveToAssets (compilation, fileName, fileContent) {
@@ -36,7 +37,7 @@ class ReportalPostCssExtracter {
                     .filter(fileName => /\.s?css$/.test(fileName))
                     .map(fileName => compilation.assets[fileName].source());
 
-                const variablesToExtract = extractVariables(data);
+                const variablesToExtract = extractVariables(data, this.variableNameRegExp);
                 const compressedCss = getExtractedCss(styleFilesSources, variablesToExtract);
                 //this.saveToAssets(compilation, 'config.css', compressedCss);
 

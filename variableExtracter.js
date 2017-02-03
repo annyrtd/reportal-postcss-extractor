@@ -1,14 +1,17 @@
-function extractVariables(content) {
+function extractVariables(content, variableNameRegExp) {
+    const allVariablesRegExp = new RegExp('\\s+' + variableNameRegExp.source +'\\s*:\\s*\\S+\\s*;', 'g');
     const allVariables = content
-        .match(/\$\S+\s*:\s*\S+\s*;/g)
+        .match(allVariablesRegExp)
         .map(item => {
-            const searchResults = item.match(/(\$\S+\s*):\s*(\S+)\s*;/);
+            const regExp = new RegExp('\\s+(' + variableNameRegExp.source +')\\s*:\\s*(\\S+)\\s*;');
+            const searchResults = item.match(regExp);
             return {
                 name: searchResults[1],
                 value: searchResults[2]
             }
         })
-        .filter(item => item.value[0] != '$');
+        // TODO: how to test variables dependencies?
+        .filter(item => !variableNameRegExp.test(item.value[0]));
 
     return getDistinct(allVariables, item => item.value);
 }
