@@ -38,12 +38,14 @@ class ReportalPostCssExtracter {
                     .map(fileName => compilation.assets[fileName].source());
 
                 const variablesToExtract = extractVariables(data, this.variableNameRegExp);
-                const compressedCss = getExtractedCss(styleFilesSources, variablesToExtract);
+                const compressedCssConfig = getExtractedCss(styleFilesSources, variablesToExtract);
+                const compressedCss = compressedCssConfig.map(item => item.style).join('\n');
+
                 //this.saveToAssets(compilation, 'config.css', compressedCss);
 
                 let jsSource;
                 if (this.toReportalScripts) {
-                    jsSource = transformCssToReportalConfig(compressedCss, variablesToExtract);
+                    jsSource = transformCssToReportalConfig(compressedCssConfig);
                 } else {
                     jsSource = transformCssToJsVariables(compressedCss, variablesToExtract);
                 }

@@ -16,21 +16,17 @@ function getExtractedCss(styleFilesSources, variablesToExtract) {
     const stylePieces = getAllStylePieces(styleFilesSources, variablesToExtract);
 
     //return stylePieces.map(item => item.toString()).join('\n');
-    return csso.minify(stylePieces.map(item => item.toString()).join('\n')).css; //.split('}').join('}\n');
+    //return csso.minify(stylePieces.map(item => item.toString()).join('\n')).css; //.split('}').join('}\n');
+
+    return stylePieces.map(stylePiece => ({
+        variable: stylePiece.variable,
+        styles: csso.minify(stylePiece.styles.map(item => item.toString()).join('\n')).css
+    }));
 }
 
 function getAllStylePieces(styleFilesSources, variablesToExtract) {
     const stylePieces = [];
-
-    styleFilesSources.forEach(source => {
-        stylePieces.push(...getStylePiecesForOneFile(variablesToExtract, source));
-    });
-
-    return stylePieces;
-}
-
-function getStylePiecesForOneFile(variablesToExtract, source) {
-    const stylePieces = [];
+    const source = styleFilesSources.join('\n');
 
     variablesToExtract.forEach(variable => {
         const value = variable.value;
@@ -38,7 +34,11 @@ function getStylePiecesForOneFile(variablesToExtract, source) {
         if (!extractedStrings)
             return;
 
-        stylePieces.push(...getStylePiecesForOneVariable(extractedStrings, value));
+        stylePieces.push({
+            variable,
+            styles: getStylePiecesForOneVariable(extractedStrings, value)
+        });
+        //stylePieces.push(...getStylePiecesForOneVariable(extractedStrings, value));
     });
 
     return stylePieces;
